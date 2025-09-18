@@ -113,7 +113,7 @@ class UserSerializer(serializers.ModelSerializer):
     # PUBLIC_INTERFACE
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = ['id', 'username', 'email', 'is_staff']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
