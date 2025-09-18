@@ -20,10 +20,15 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import TemplateView
+from django.http import HttpResponse, HttpResponseNotFound
+from django.conf import settings
+from pathlib import Path
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # API endpoints should be first so they take precedence.
     path('api/', include('api.urls')),
+    path('admin/', admin.site.urls),
 ]
 
 schema_view = get_schema_view(
@@ -66,4 +71,27 @@ urlpatterns += [
     re_path(r'^docs/$', dynamic_schema_view, name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     re_path(r'^swagger\.json$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+]
+
+def spa_index_view(request, path=None):
+    """
+    PUBLIC_INTERFACE
+    Serve the React SPA index.html for any non-API, non-admin route.
+    This enables client-side routing for the React app in production deployments
+    where Django serves the frontend build.
+    """
+    # Expected build path: BASE_DIR / 'frontend_build' / 'index.html'
+    index_path: Path = Path(settings.BASE_DIR) / 'frontend_build' / 'index.html'
+    if index_path.exists():
+        try:
+            with open(index_path, 'rb') as f:
+                return HttpResponse(f.read(), content_type='text/html')
+        except Exception:
+            return HttpResponseNotFound("Frontend build not found or unreadable.")
+    return HttpResponseNotFound("Frontend build not found. Ensure React is built and copied to 'frontend_build'.")
+
+# Catch-all: anything not starting with /api or /admin or known docs should go to SPA
+# Put this at the very end to not override API/docs/admin paths.
+urlpatterns += [
+    re_path(r'^(?!api/|admin/|docs/|redoc/|swagger\.json).*$', spa_index_view, name='spa-fallback'),
 ]

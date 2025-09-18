@@ -66,7 +66,9 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # Include React build directory so we can render index.html for SPA routes.
+        # Ensure your deployment copies the React build into BASE_DIR / 'frontend_build'
+        'DIRS': [BASE_DIR / 'frontend_build'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,6 +129,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Where collectstatic will place files (useful for production)
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Serve built React static files (when the React app is built into frontend_build)
+# The create-react-app build places assets under 'static' within the build folder.
+STATICFILES_DIRS = [
+    BASE_DIR / 'frontend_build' / 'static',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
