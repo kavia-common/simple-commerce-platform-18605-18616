@@ -28,9 +28,10 @@ urlpatterns = [
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="My API",
+      title="Simple Commerce API",
       default_version='v1',
-      description="Test description",
+      description="REST API for products, carts, orders, auth, and addresses.",
+      contact=openapi.Contact(email="support@example.com"),
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
@@ -51,9 +52,10 @@ def dynamic_schema_view(request, *args, **kwargs):
     url = get_full_url(request)
     view = get_schema_view(
         openapi.Info(
-            title="My API",
+            title="Simple Commerce API",
             default_version='v1',
-            description="API Docs",
+            description="REST API for products, carts, orders, auth, and addresses.",
+            contact=openapi.Contact(email="support@example.com"),
         ),
         public=True,
         url=url,
