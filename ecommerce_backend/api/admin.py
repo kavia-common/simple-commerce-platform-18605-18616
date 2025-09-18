@@ -1,3 +1,1 @@
-from django.contrib import admin
-
-# Register your models here.
+# No admin registrations yet; keep file minimal to satisfy linter and Django app structure.
