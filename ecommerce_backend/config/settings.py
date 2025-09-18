@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
-import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -66,9 +65,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # Include React build directory so we can render index.html for SPA routes.
-        # Ensure your deployment copies the React build into BASE_DIR / 'frontend_build'
-        'DIRS': [BASE_DIR / 'frontend_build'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -130,15 +127,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# Where collectstatic will place files (useful for production)
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Serve built React static files (when the React app is built into frontend_build)
-# The create-react-app build places assets under 'static' within the build folder.
-STATICFILES_DIRS = [
-    BASE_DIR / 'frontend_build' / 'static',
-]
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -148,31 +136,3 @@ CORS_ALLOW_ALL_ORIGINS = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
 X_FRAME_OPTIONS = 'ALLOWALL'
-
-# DRF configuration
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,
-    'DEFAULT_FILTER_BACKENDS': [
-        'rest_framework.filters.SearchFilter',
-        'rest_framework.filters.OrderingFilter',
-    ]
-}
-
-# Swagger/OpenAPI defaults
-SWAGGER_SETTINGS = {
-    'DEFAULT_INFO': 'config.urls.schema_view',
-    'USE_SESSION_AUTH': True,
-}
-
-# Placeholders for future Supabase integration
-# Request these env variables from the user and set in .env (not hardcoded here)
-SUPABASE_URL = os.getenv('SUPABASE_URL', '')
-SUPABASE_ANON_KEY = os.getenv('SUPABASE_ANON_KEY', '')
